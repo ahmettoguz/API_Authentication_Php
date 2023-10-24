@@ -7,7 +7,7 @@ header("Access-Control-Allow-Origin: *");
 // header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 // header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
-var_dump($_GET);
+var_dump($_POST);
 // GET
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (sizeof($_GET) == 0) {
@@ -15,32 +15,27 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         echo json_encode(read());
     } elseif (isset($_GET["operation"])) {
         // READ
-        if ($_GET["operation"] == "getUser")
-            echo json_encode(getUser($_GET["id"]));
-
-        // DELETE
-        elseif ($_GET["operation"] == "delete_User")
-            echo json_encode(delete_User($_GET["id"]));
-
-        // SESSION
-        elseif ($_GET["operation"] == "log_Out")
-            echo json_encode(log_Out());
+        if ($_GET["operation"] == "getAccount")
+            echo json_encode(getAccount($_GET["id"]));
     }
 }
 
 // POST
 elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["operation"])) {
+
         // CREATE
-        if ($_POST["operation"] == "create_User")
-            echo json_encode(create_User($_POST["email"], $_POST["password"], $_POST["name"], $_POST["surname"]));
+        if ($_POST["operation"] == "createAccount")
+            echo json_encode(createAccount($_POST["username"], $_POST["password"]));
 
         // UPDATE
-        elseif ($_POST["operation"] == "update_User")
-            echo json_encode(update_User($_POST["id"], $_POST["email"], $_POST["password"], $_POST["name"], $_POST["surname"]));
+        elseif ($_POST["operation"] == "updateAccount")
+            echo json_encode(updateAccount($_POST["id"], $_POST["username"], $_POST["password"]));
 
-        // SESSION
-        elseif ($_POST["operation"] == "login")
-            echo json_encode(login($_POST["email"], $_POST["password"], $_POST["remember"]));
+        // DELETE
+        elseif ($_POST["operation"] == "deleteAccount")
+            echo json_encode(deleteAccount($_POST["id"]));
     }
 }
+
+

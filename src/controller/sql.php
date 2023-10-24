@@ -1,28 +1,20 @@
 <?php
 require_once __DIR__ . "/../database/dbConnection.php";
 
-// CREATE -------------------------------------------------------------------------------------------------------------------
-function create_User($email, $password, $name, $surname)
+//---------------------- - CREATE - ----------------------
+function createAccount($username, $password)
 {
-    // if everyone can create new user so that shouldn't validated.
-    validate_Session();
-
-
     // html, js injection preventation
-    $email = filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $username = filter_var($username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $password = filter_var($password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $name = filter_var($name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $surname = filter_var($surname, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     global $db;
 
     try {
-        $sql = "insert into user (email, password, name, surname) values (:email, :password, :name, :surname)";
+        $sql = "insert into account (username, password) values (:username, :password)";
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(":email", $email, PDO::PARAM_STR);
+        $stmt->bindValue(":username", $username, PDO::PARAM_STR);
         $stmt->bindValue(":password", $password, PDO::PARAM_STR);
-        $stmt->bindValue(":name", $name, PDO::PARAM_STR);
-        $stmt->bindValue(":surname", $surname, PDO::PARAM_STR);
         $stmt->execute();
         $lastInsertedId = $db->lastInsertId();
     } catch (PDOException $ex) {
@@ -52,7 +44,7 @@ function read()
     return $rows;
 }
 
-function getUser($id)
+function getAccount($id)
 {
     global $db;
 
@@ -74,40 +66,13 @@ function getUser($id)
     return $user;
 }
 
-function read_Joined()
+//---------------------- - DELETE -  ----------------------
+function deleteAccount($id)
 {
-
-    validate_Session();
-
     global $db;
 
     try {
-        $sql = "select project.id as id, name, description, photo, start_date, end_date,
-        TIMEDIFF(end_date, current_timestamp()) as due, progress, department_id, state_id
-        from project 
-        inner join project_state 
-        ON project.state_id = project_state.id";
-        $stmt = $db->prepare($sql);
-        $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        // $stmt->rowCount();
-    } catch (Exception $ex) {
-        die("Query Error : " . $ex->getMessage());
-    }
-
-    return $rows;
-}
-
-
-// DELETE -------------------------------------------------------------------------------------------------------------------
-function delete_User($id)
-{
-    validate_Session();
-
-    global $db;
-
-    try {
-        $sql = "delete from user where id = :id";
+        $sql = "delete from account where id = :id";
         $stmt = $db->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -120,30 +85,24 @@ function delete_User($id)
     return true;
 }
 
-// UPDATE -------------------------------------------------------------------------------------------------------------------
-function update_User($id, $email, $password, $name, $surname)
+//---------------------- - UPDATE -  ----------------------
+function updateAccount($id, $username, $password)
 {
-    validate_Session();
-
     // html, js injection preventation
-    $email = filter_var($email, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $username = filter_var($username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $password = filter_var($password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $name = filter_var($name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $surname = filter_var($surname, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     global $db;
 
     try {
-        $sql = "update user
-                set email = :email, password = :password, name = :name, surname = :surname
+        $sql = "update account
+                set username = :username, password = :password
                 where id = :id
         ";
         $stmt = $db->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
-        $stmt->bindValue(":email", $email, PDO::PARAM_STR);
+        $stmt->bindValue(":username", $username, PDO::PARAM_STR);
         $stmt->bindValue(":password", $password, PDO::PARAM_STR);
-        $stmt->bindValue(":name", $name, PDO::PARAM_STR);
-        $stmt->bindValue(":surname", $surname, PDO::PARAM_STR);
         $stmt->execute();
         // $updatedRowCount = $stmt->rowCount();
     } catch (PDOException $ex) {
@@ -154,16 +113,10 @@ function update_User($id, $email, $password, $name, $surname)
     return true;
 }
 
-// SESSION -------------------------------------------------------------------------------------------------------------------
 
-function validate_Session()
-{
-    // 2 direct method not to create loop
-    if (!has_Valid_Session()) {
-        // die(json_encode(array('message' => 'ERROR', 'code' => 1337)));
-        die(json_encode("❌❌❌ NOT Authenticated ❌❌❌"));
-    }
-}
+
+
+
 
 
 function login($email, $password, $remember)
@@ -197,14 +150,6 @@ function login($email, $password, $remember)
     }
 }
 
-function has_Valid_Session()
-{
-    if (isset($_SESSION["user"])) {
-        return true;
-    }
-    return false;
-}
-
 function log_Out()
 {
     $_SESSION = [];
@@ -218,22 +163,4 @@ function log_Out()
     // header("Location:http://localhost/AhmetOguzErgin/Web/project_manager/");
 
     return true;
-}
-
-function get_Session()
-{
-    return $_SESSION["user"];
-}
-
-// FILE -------------------------------------------------------------------------------------------------------------------
-function create_Photo($tempLocation, $fileName, $targetLocation)
-{
-    if (move_uploaded_file($tempLocation, $targetLocation . $fileName)) {
-        return true;
-    }
-
-    // if ($oldIcon["icon"] != "default_icon.png")
-    //     unlink("../images/company/{$oldIcon["icon"]}");
-
-    return false;
 }
