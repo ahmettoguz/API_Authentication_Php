@@ -10,7 +10,7 @@ header("Access-Control-Allow-Origin: *");
 // var_dump($_POST);
 // GET
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    
+
     $op = $_GET["operation"] ?? null;
 
     if ($op == null) {
@@ -26,22 +26,26 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 // POST
 elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["operation"])) {
 
+    $op = $_POST["operation"] ?? null;
+
+    if ($op == null) {
+        echo json_encode(getNotFound());
+    } else {
         // CREATE
-        if ($_POST["operation"] == "createAccount")
+        if ($op == "createAccount")
             echo json_encode(createAccount($_POST));
 
         // UPDATE
-        elseif ($_POST["operation"] == "updateAccount")
-            echo json_encode(updateAccount($_POST["id"], $_POST["username"], $_POST["password"]));
+        elseif ($op == "updateAccount")
+            echo json_encode(updateAccount($_POST));
 
         // DELETE
-        elseif ($_POST["operation"] == "deleteAccount")
-            echo json_encode(deleteAccount($_POST["id"]));
+        elseif ($op == "deleteAccount")
+            echo json_encode(deleteAccount($_POST));
 
         // LOGIN
-        elseif ($_POST["operation"] == "login")
+        elseif ($op == "login")
             echo json_encode(login($_POST["username"], $_POST["password"]));
     }
 }

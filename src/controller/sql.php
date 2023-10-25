@@ -126,9 +126,33 @@ function getAccount($payload)
 }
 
 //---------------------- - DELETE -  ----------------------
-function deleteAccount($id)
+function deleteAccount($payload)
 {
+    $id = $payload["id"] ?? null;
+
+    if ($id == null) {
+        http_response_code(400);
+        $response = [
+            "status" => 400,
+            "state" => false,
+            "message" => "Payload error"
+        ];
+        return $response;
+    }
+
     global $db;
+
+    $account = getAccount(["id" => $id])["data"]["account"];
+
+    if ($account == false) {
+        http_response_code(400);
+        $response = [
+            "status" => 400,
+            "state" => false,
+            "message" => "There is no account with id $id",
+        ];
+        return $response;
+    }
 
     try {
         $sql = "delete from account where id = :id";
@@ -137,16 +161,42 @@ function deleteAccount($id)
         $stmt->execute();
         // $deletedRowCount = $stmt->rowCount();
     } catch (PDOException $ex) {
-        return false;
-        die("<p>Update Error : " . $ex->getMessage());
+        http_response_code(500);
+        $response = [
+            "status" => 500,
+            "state" => false,
+            "message" => $ex,
+        ];
+        return $response;
     }
 
-    return true;
+    http_response_code(200);
+    $response = [
+        "status" => 200,
+        "state" => true,
+        "message" => "account deleted",
+        "data" => ["deletedAccount" => $account]
+    ];
+    return $response;
 }
 
 //---------------------- - UPDATE -  ----------------------
-function updateAccount($id, $username, $password)
+function updateAccount($payload)
 {
+    $id = $payload["id"] ?? null;
+    $username = $payload["username"] ?? null;
+    $password = $payload["password"] ?? null;
+
+    if ($id == null || $username == null || $password == null) {
+        http_response_code(400);
+        $response = [
+            "status" => 400,
+            "state" => false,
+            "message" => "Payload error"
+        ];
+        return $response;
+    }
+
     // html, js injection preventation
     $username = filter_var($username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $password = filter_var($password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -165,11 +215,23 @@ function updateAccount($id, $username, $password)
         $stmt->execute();
         // $updatedRowCount = $stmt->rowCount();
     } catch (PDOException $ex) {
-        die("Insert Error : " . $ex->getMessage());
-        return false;
+        http_response_code(500);
+        $response = [
+            "status" => 500,
+            "state" => false,
+            "message" => $ex,
+        ];
+        return $response;
     }
 
-    return true;
+    http_response_code(200);
+    $response = [
+        "status" => 200,
+        "state" => true,
+        "message" => "account updated",
+        "data" => ["updatedId" => $id]
+    ];
+    return $response;
 }
 
 //---------------------- - 404 -  ----------------------
@@ -183,6 +245,9 @@ function getNotFound()
     ];
     return $response;
 }
+
+
+
 
 //---------------------- - LOGIN -  ----------------------
 function login($username, $password)
@@ -215,10 +280,7 @@ function login($username, $password)
     return $row;
 }
 
-
-
-
-
+//---------------------- - LOGOUT -  ----------------------
 function log_Out()
 {
     $_SESSION = [];
