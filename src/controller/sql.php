@@ -2,8 +2,21 @@
 require_once __DIR__ . "/../database/dbConnection.php";
 
 //---------------------- - CREATE - ----------------------
-function createAccount($username, $password)
+function createAccount($payload)
 {
+    $username = $payload["username"] ?? null;
+    $password = $payload["password"] ?? null;
+
+    if ($username == null || $password == null) {
+        http_response_code(400);
+        $response = [
+            "status" => 400,
+            "state" => false,
+            "message" => "Payload error"
+        ];
+        return $response;
+    }
+
     // html, js injection preventation
     $username = filter_var($username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $password = filter_var($password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -18,15 +31,27 @@ function createAccount($username, $password)
         $stmt->execute();
         $lastInsertedId = $db->lastInsertId();
     } catch (PDOException $ex) {
-        die("<p>Insert Error : " . $ex->getMessage());
-        return false;
+        http_response_code(500);
+        $response = [
+            "status" => 500,
+            "state" => false,
+            "message" => $ex,
+        ];
+        return $response;
     }
 
-    return $lastInsertedId;
+    http_response_code(200);
+    $response = [
+        "status" => 200,
+        "state" => true,
+        "message" => "account created",
+        "data" => ["insertedId" => $lastInsertedId]
+    ];
+    return $response;
 }
 
 //---------------------- - READ - ----------------------
-function read()
+function getAccounts()
 {
     global $db;
 
@@ -37,33 +62,67 @@ function read()
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         // $stmt->rowCount();
     } catch (Exception $ex) {
-        die("Query Error : " . $ex->getMessage());
-        return false;
+        http_response_code(500);
+        $response = [
+            "status" => 500,
+            "state" => false,
+            "message" => $ex,
+        ];
+        return $response;
     }
 
-    return $rows;
+    http_response_code(200);
+    $response = [
+        "status" => 200,
+        "state" => true,
+        "message" => "account created",
+        "data" => ["accounts" => $rows]
+    ];
+    return $response;
 }
 
-function getAccount($id)
+function getAccount($payload)
 {
+    $id = $payload["id"] ?? null;
+
+    if ($id == null) {
+        http_response_code(400);
+        $response = [
+            "status" => 400,
+            "state" => false,
+            "message" => "Payload error"
+        ];
+        return $response;
+    }
+
     global $db;
 
     try {
         $sql = "select id, username, password
         from account
         where id = :id";
-
         $stmt = $db->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         // $stmt->rowCount();
     } catch (Exception $ex) {
-        die("Query Error : " . $ex->getMessage());
-        return false;
+        http_response_code(500);
+        $response = [
+            "status" => 500,
+            "state" => false,
+            "message" => $ex,
+        ];
+        return $response;
     }
-
-    return $user;
+    http_response_code(200);
+    $response = [
+        "status" => 200,
+        "state" => true,
+        "message" => "account created",
+        "data" => ["account" => $user]
+    ];
+    return $response;
 }
 
 //---------------------- - DELETE -  ----------------------
@@ -113,23 +172,30 @@ function updateAccount($id, $username, $password)
     return true;
 }
 
+//---------------------- - 404 -  ----------------------
+function getNotFound()
+{
+    http_response_code(404);
+    $response = [
+        "status" => 404,
+        "state" => false,
+        "message" => "Payload error"
+    ];
+    return $response;
+}
 
-
-
-
-
-
-function login($email, $password, $remember)
+//---------------------- - LOGIN -  ----------------------
+function login($username, $password)
 {
     global $db;
 
-    $password = sha1($password . "SOCI");
+    // $password = sha1($password . "SOCI");
+
 
     try {
-        $sql = "select email, name, surname from user where email = :email and password = :password";
-
+        $sql = "select id, username from account where username = :username and password = :password";
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(":email", $email, PDO::PARAM_STR);
+        $stmt->bindValue(":username", $username, PDO::PARAM_STR);
         $stmt->bindValue(":password", $password, PDO::PARAM_STR);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -137,18 +203,21 @@ function login($email, $password, $remember)
         die("Query Error : " . $ex->getMessage());
     }
 
-    if ($row == false)
+    if ($row == false) {
+        http_response_code(401);
         return false;
-    else {
-        // correct login, form session
-        $_SESSION["user"] = $row;
-        if ($remember == "true") {
-            setcookie(session_name(), session_id(), time() + 60 * 60 * 24 * 7, "/");
-        }
-
-        return true;
     }
+
+    $tokenn = "q2e";
+
+    http_response_code(200);
+    header("Authorization: Bearer $tokenn");
+    return $row;
 }
+
+
+
+
 
 function log_Out()
 {
