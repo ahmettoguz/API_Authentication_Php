@@ -44,7 +44,7 @@ function createAccount($payload)
     $response = [
         "status" => 200,
         "state" => true,
-        "message" => "account created",
+        "message" => "Account created successfully",
         "data" => ["insertedId" => $lastInsertedId]
     ];
     return $response;
@@ -75,7 +75,7 @@ function getAccounts()
     $response = [
         "status" => 200,
         "state" => true,
-        "message" => "account created",
+        "message" => "Get all accounts successfully",
         "data" => ["accounts" => $rows]
     ];
     return $response;
@@ -119,8 +119,63 @@ function getAccount($payload)
     $response = [
         "status" => 200,
         "state" => true,
-        "message" => "account created",
+        "message" => "Get specific account successfully",
         "data" => ["account" => $user]
+    ];
+    return $response;
+}
+
+
+//---------------------- - UPDATE -  ----------------------
+function updateAccount($payload)
+{
+    $id = $payload["id"] ?? null;
+    $username = $payload["username"] ?? null;
+    $password = $payload["password"] ?? null;
+
+    if ($id == null || $username == null || $password == null) {
+        http_response_code(400);
+        $response = [
+            "status" => 400,
+            "state" => false,
+            "message" => "Payload error"
+        ];
+        return $response;
+    }
+
+    // html, js injection preventation
+    $username = filter_var($username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $password = filter_var($password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+    global $db;
+
+    try {
+        $sql = "update account
+                set username = :username, password = :password
+                where id = :id
+        ";
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":username", $username, PDO::PARAM_STR);
+        $stmt->bindValue(":password", $password, PDO::PARAM_STR);
+        $stmt->execute();
+        // $updatedRowCount = $stmt->rowCount();
+    } catch (PDOException $ex) {
+        http_response_code(500);
+        $response = [
+            "status" => 500,
+            "state" => false,
+            "message" => $ex,
+        ];
+        return $response;
+    }
+
+    http_response_code(200);
+    $response = [
+        "status" => 200,
+        "state" => true,
+        "message" => "Account updated successfully",
+        "data" => ["updatedId" => $id]
     ];
     return $response;
 }
@@ -174,65 +229,12 @@ function deleteAccount($payload)
     $response = [
         "status" => 200,
         "state" => true,
-        "message" => "account deleted",
+        "message" => "Account deleted successfully",
         "data" => ["deletedAccount" => $account]
     ];
     return $response;
 }
 
-//---------------------- - UPDATE -  ----------------------
-function updateAccount($payload)
-{
-    $id = $payload["id"] ?? null;
-    $username = $payload["username"] ?? null;
-    $password = $payload["password"] ?? null;
-
-    if ($id == null || $username == null || $password == null) {
-        http_response_code(400);
-        $response = [
-            "status" => 400,
-            "state" => false,
-            "message" => "Payload error"
-        ];
-        return $response;
-    }
-
-    // html, js injection preventation
-    $username = filter_var($username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $password = filter_var($password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
-    global $db;
-
-    try {
-        $sql = "update account
-                set username = :username, password = :password
-                where id = :id
-        ";
-        $stmt = $db->prepare($sql);
-        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
-        $stmt->bindValue(":username", $username, PDO::PARAM_STR);
-        $stmt->bindValue(":password", $password, PDO::PARAM_STR);
-        $stmt->execute();
-        // $updatedRowCount = $stmt->rowCount();
-    } catch (PDOException $ex) {
-        http_response_code(500);
-        $response = [
-            "status" => 500,
-            "state" => false,
-            "message" => $ex,
-        ];
-        return $response;
-    }
-
-    http_response_code(200);
-    $response = [
-        "status" => 200,
-        "state" => true,
-        "message" => "account updated",
-        "data" => ["updatedId" => $id]
-    ];
-    return $response;
-}
 
 //---------------------- - 404 -  ----------------------
 function getNotFound()
@@ -277,6 +279,13 @@ function login($username, $password)
 
     http_response_code(200);
     header("Authorization: Bearer $tokenn");
+
+    //TODO secure and http only will change
+    //                                                             secure httponly
+    setcookie("token", $tokenn, time() + 60 * 60 * 24 * 1, "/", "", false, false);
+    // true as the 6th parameter makes the cookie secure, ensuring that it is only transmitted over HTTPS connections.
+    // true as the 7th parameter sets the HttpOnly flag, which prevents the cookie from being accessed by JavaScript.
+
     return $row;
 }
 
