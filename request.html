@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>api test</title>
+    <style>
+      body {
+        background-color: #fbfbfb;
+        font-size: 15px;
+        line-height: 25px;
+        padding-left: 50px;
+      }
+      #res {
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        border-radius: 5px;
+        background-color: white;
+        width: fit-content;
+        margin: 0 auto;
+        padding: 5px 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="res">api test</div>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      function request(url, type, headers, data) {
+        $.ajax({
+          url: url,
+          type: type,
+          headers: headers,
+          data: data,
+          success: function (response) {
+            const out = JSON.stringify(response, null, 3);
+            $("#res").html("<pre>" + out + "</pre>");
+
+            console.log(response);
+          },
+          error: function (xhr, status, error) {
+            console.error(xhr, status, error);
+          },
+        });
+      }
+      // ---------------------------------------------
+      const baseUrl =
+        "http://127.0.0.1/AhmetOguzErgin/Web/API_Authentication_Php/";
+
+      function login() {
+        const url = baseUrl;
+        const type = "post";
+        const headers = {
+          Authorization: "Bearer YourAccessToken",
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "login",
+          username: "ahmet",
+          password: "1234",
+        };
+        request(url, type, headers, data);
+      }
+
+      // ----- - main - -----
+
+      login();
+
+      // --------------------
+    </script>
+  </body>
+</html>
