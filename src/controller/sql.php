@@ -280,17 +280,11 @@ function login($username, $password)
     http_response_code(200);
     header("Authorization: Bearer $tokenn");
 
-    // // Set the token as a cookie
-    // setcookie("token", $tokenn, time() + 3600, "/", "localhost");
-    // setcookie("name", "val", time() + 60 * 60 * 24 * 7, "/");
-
-
-    // foreach ($_COOKIE as $name => $value) {
-    //    return  "Cookie name: $name, Value: $value<br>";
-    // }
-
-    // return $_COOKIE;
-
+    //TODO secure and http only will change
+    //                                                             secure httponly
+    setcookie("token", $tokenn, time() + 60 * 60 * 24 * 1, "/", "", false, false);
+    // true as the 6th parameter makes the cookie secure, ensuring that it is only transmitted over HTTPS connections.
+    // true as the 7th parameter sets the HttpOnly flag, which prevents the cookie from being accessed by JavaScript.
 
     return $row;
 }

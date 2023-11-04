@@ -49,7 +49,7 @@
       }
       // ---------------------------------------------
       const baseUrl =
-        "http://127.0.0.1/AhmetOguzErgin/Web/API_Authentication_Php/";
+        "http://localhost/AhmetOguzErgin/Web/API_Authentication_Php/";
 
       function login() {
         const url = baseUrl;
@@ -70,6 +70,10 @@
 
       login();
 
+      setTimeout(() => {
+        $("#res").append(document.cookie);
+        $("#res").append("</br>cookie eklendi");
+      }, 500);
       // --------------------
     </script>
   </body>
