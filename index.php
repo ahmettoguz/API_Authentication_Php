@@ -50,6 +50,9 @@ elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
         case 'login':
             echo json_encode(login($_POST["username"], $_POST["password"]));
             break;
+        case 'logout':
+            echo json_encode(logout());
+            break;
 
         default:
             echo json_encode(getNotFound());

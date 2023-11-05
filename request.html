@@ -66,13 +66,27 @@
         request(url, type, headers, data);
       }
 
+      function logout() {
+        const url = baseUrl;
+        const type = "post";
+        const headers = {
+          Authorization: "Bearer YourAccessToken",
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "logout",
+        };
+        request(url, type, headers, data);
+      }
+
       // ----- - main - -----
 
-      login();
+      // login();
+      logout();
 
       setTimeout(() => {
+        $("#res").append("cookie bilgileri aşağıda veriliyor: </br>");
         $("#res").append(document.cookie);
-        $("#res").append("</br>cookie eklendi");
       }, 500);
       // --------------------
     </script>

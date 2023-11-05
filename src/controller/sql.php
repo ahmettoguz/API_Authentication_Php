@@ -290,17 +290,18 @@ function login($username, $password)
 }
 
 //---------------------- - LOGOUT -  ----------------------
-function log_Out()
+function logout()
 {
-    $_SESSION = [];
+    // for php remove cookie data
+    unset($_COOKIE["token"]);
 
-    // delete cookie
-    setcookie(session_name(), "", 1, "/"); // delete memory cookie 
+    // unset cookie from browser
+    setcookie('token', '', time() - 3600, '/');
 
-    // delete session file from tmp
-    session_destroy();
-
-    // header("Location:http://localhost/AhmetOguzErgin/Web/project_manager/");
-
-    return true;
+    $response = [
+        "status" => 200,
+        "state" => true,
+        "message" => "Logout successfully done.",
+    ];
+    return $response;
 }
