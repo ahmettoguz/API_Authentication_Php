@@ -7,22 +7,6 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
-// sha 256
-$inputString = "123456";
-$sha256Hash = hash('sha256', $inputString);
-echo "SHA-256 Hash: " . $sha256Hash;
-// sha 256
-
-// base64
-$data = "123456";
-$encodedData = base64_encode($data);
-echo "Base64 Encoded Data: " . $encodedData;
-$decodedData = base64_decode($encodedData);
-echo "Base64 Decoded Data: " . $decodedData;
-// base64
-
-exit;
-
 // GET
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
 

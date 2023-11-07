@@ -258,7 +258,6 @@ function login($username, $password)
 
     // $password = sha1($password . "SOCI");
 
-
     try {
         $sql = "select id, username from account where username = :username and password = :password";
         $stmt = $db->prepare($sql);
@@ -274,6 +273,27 @@ function login($username, $password)
         http_response_code(401);
         return false;
     }
+
+    // $secretKey = "secret";
+
+
+    // base64
+    $jwtHeader = ["alg" => "SHA256", "typ" => "JWT"];
+    $jwtHeaderJson = json_encode($jwtHeader);
+    $jwtHeaderDecoded = base64_encode($jwtHeaderJson);
+    // $decodedData = base64_decode($encodedData);
+    // base64
+    return $jwtHeaderDecoded;
+
+
+
+
+    // sha 256
+    $inputString = "123456";
+    $sha256Hash = hash('sha256', $inputString);
+    echo "SHA-256 Hash: " . $sha256Hash;
+    // sha 256
+
 
     $tokenn = "q2e";
 
@@ -303,5 +323,6 @@ function logout()
         "state" => true,
         "message" => "Logout successfully done.",
     ];
+
     return $response;
 }
