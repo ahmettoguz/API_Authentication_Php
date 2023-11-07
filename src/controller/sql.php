@@ -274,35 +274,14 @@ function login($username, $password)
         return false;
     }
 
-    // $secretKey = "secret";
-
-
-    // base64
-    $jwtHeader = ["alg" => "SHA256", "typ" => "JWT"];
-    $jwtHeaderJson = json_encode($jwtHeader);
-    $jwtHeaderDecoded = base64_encode($jwtHeaderJson);
-    // $decodedData = base64_decode($encodedData);
-    // base64
-    return $jwtHeaderDecoded;
-
-
-
-
-    // sha 256
-    $inputString = "123456";
-    $sha256Hash = hash('sha256', $inputString);
-    echo "SHA-256 Hash: " . $sha256Hash;
-    // sha 256
-
-
-    $tokenn = "q2e";
+    $token = generateToken();
 
     http_response_code(200);
-    header("Authorization: Bearer $tokenn");
+    header("Authorization: Bearer $token");
 
     //TODO secure and http only will change
     //                                                             secure httponly
-    setcookie("token", $tokenn, time() + 60 * 60 * 24 * 1, "/", "", false, false);
+    setcookie("token", $token, time() + 60 * 60 * 24 * 1, "/", "", false, false);
     // true as the 6th parameter makes the cookie secure, ensuring that it is only transmitted over HTTPS connections.
     // true as the 7th parameter sets the HttpOnly flag, which prevents the cookie from being accessed by JavaScript.
 
@@ -325,4 +304,44 @@ function logout()
     ];
 
     return $response;
+}
+
+//---------------------- - Authentication Functions -  ----------------------
+function generateToken()
+{
+    // base64 header and body encode with base64
+    // $decodedData = base64_decode($encodedData);
+    $jwtHeader = [
+        "alg" => "SHA256",
+        "typ" => "JWT"
+    ];
+    $jwtHeaderJson = json_encode($jwtHeader);
+    $jwtHeaderEncoded = base64_encode($jwtHeaderJson);
+
+    $jwtBody = [
+        "id" => "ID",
+        "name" => "NAME",
+        "iat" => time(),
+        "exp" => time() + 60 * 60 * 24 // Expiration time 1 day
+    ];
+    $jwtBodyJson = json_encode($jwtBody);
+    $jwtBodyEncoded = base64_encode($jwtBodyJson);
+
+    // sha 256 signiture
+    $signiture = getSigniture($jwtHeaderEncoded, $jwtBodyEncoded);
+
+    $token = $jwtHeaderEncoded . "." . $jwtBodyEncoded . "." . $signiture;
+
+    return $token;
+}
+
+function getSigniture($jwtHeaderEncoded, $jwtBodyEncoded)
+{
+    $secretKey = "secret";
+    $jwtHeaders = $jwtHeaderEncoded . $jwtBodyEncoded . $secretKey;
+
+    $signiture = hash('sha256', $jwtHeaders);
+    $signitureEncoded = base64_encode($signiture);
+
+    return $signitureEncoded;
 }
