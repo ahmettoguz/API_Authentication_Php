@@ -53,6 +53,16 @@ function createAccount($payload)
 //---------------------- - READ - ----------------------
 function getAccounts()
 {
+    if (checkToken() !== true) {
+        http_response_code(401);
+        $response = [
+            "status" => 401,
+            "state" => false,
+            "message" => "Access Token is not valid."
+        ];
+        return $response;
+    }
+
     global $db;
 
     try {
@@ -249,8 +259,6 @@ function getNotFound()
 }
 
 
-
-
 //---------------------- - LOGIN -  ----------------------
 function login($username, $password)
 {
@@ -271,21 +279,38 @@ function login($username, $password)
 
     if ($row == false) {
         http_response_code(401);
-        return false;
+        $response = [
+            "status" => 401,
+            "state" => false,
+            "message" => "Unauthorized."
+        ];
+        return $response;
     }
 
+    // generate token
     $token = generateToken();
 
-    http_response_code(200);
-    header("Authorization: Bearer $token");
-
+    //set cookie
     //TODO secure and http only will change
     //                                                             secure httponly
-    setcookie("token", $token, time() + 60 * 60 * 24 * 1, "/", "", false, false);
+    setcookie("Access_Token", $token, time() + 60 * 60 * 24 * 1, "/", "", false, false);
     // true as the 6th parameter makes the cookie secure, ensuring that it is only transmitted over HTTPS connections.
     // true as the 7th parameter sets the HttpOnly flag, which prevents the cookie from being accessed by JavaScript.
 
-    return $row;
+    // set response header 
+    header("Authorization: Bearer $token");
+    http_response_code(200);
+    $response = [
+        "status" => 200,
+        "state" => true,
+        "message" => "Login operation is successfull.",
+        "data" => [
+            "account" => $row,
+            "token" => "Authorization: Bearer " . $token
+        ],
+    ];
+
+    return $response;
 }
 
 //---------------------- - LOGOUT -  ----------------------
@@ -306,7 +331,7 @@ function logout()
     return $response;
 }
 
-//---------------------- - Authentication Functions -  ----------------------
+//---------------------- - Authentication Token Functions -  ----------------------
 function generateToken()
 {
     // base64 header and body encode with base64
@@ -344,4 +369,66 @@ function getSigniture($jwtHeaderEncoded, $jwtBodyEncoded)
     $signitureEncoded = base64_encode($signiture);
 
     return $signitureEncoded;
+}
+
+function checkToken()
+{
+    if (!isset($_SERVER['HTTP_ACCESSTOKEN'])) {
+        http_response_code(401);
+        $response = [
+            "status" => 401,
+            "state" => false,
+            "message" => "Unauthorized."
+        ];
+        return $response;
+    }
+
+    $jwtToken = $_SERVER['HTTP_ACCESSTOKEN'];
+
+    // Remove the "Bearer " prefix
+    $jwtToken = str_replace('Bearer ', '', $jwtToken);
+
+    // Split the JWT token by periods
+    $tokenParts = explode(".", $jwtToken);
+
+    // check parts
+    if (count($tokenParts) !== 3) {
+        http_response_code(401);
+        $response = [
+            "status" => 401,
+            "state" => false,
+            "message" => "Unauthorized."
+        ];
+        return $response;
+    }
+
+    // Decode the base64-encoded payload 
+    $payload = base64_decode($tokenParts[1]);
+    $payloadData = json_decode($payload, true);
+
+    // if token is expired
+    if (time() > $payloadData["exp"]) {
+        http_response_code(401);
+        $response = [
+            "status" => 401,
+            "state" => false,
+            "message" => "Unauthorized."
+        ];
+        return $response;
+    }
+
+    // check the integrity
+    $signiture = getSigniture($tokenParts[0], $tokenParts[1]);
+    if ($tokenParts[2] !== $signiture) {
+        http_response_code(401);
+        $response = [
+            "status" => 401,
+            "state" => false,
+            "message" => "Integrity of the token is not valid."
+        ];
+        return $response;
+    }
+
+    // return true
+    return true;
 }

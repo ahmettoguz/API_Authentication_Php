@@ -79,10 +79,24 @@
         request(url, type, headers, data);
       }
 
+      function getAccounts() {
+        const url = baseUrl;
+        const type = "get";
+        const headers = {
+          accesstoken:
+            "Bearer eyJhbGciOiJTSEEyNTYiLCJ0eXAiOiJKV1QifQ==.eyJpZCI6IklEIiwibmFtZSI6Ik5BTUUiLCJpYXQiOjE2OTkzODYwMDQsImV4cCI6MTY5OTQ3MjQwNH0=.MGQzODIxOGNhNjlhOTU1NjQ4NmE5YjBmMDJmMWQ4MDg2ZjZlYjA4NGUyM2MwNTg3NjYwZjI1MzU2MTJjZTI4Mg==",
+        };
+        const data = {
+          operation: "getAccounts",
+        };
+        request(url, type, headers, data);
+      }
+
       // ----- - main - -----
 
-      login();
+      // login();
       // logout();
+      getAccounts();
 
       setTimeout(() => {
         $("#res").append("cookie bilgileri aşağıda veriliyor: </br>");
