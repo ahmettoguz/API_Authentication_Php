@@ -40,6 +40,11 @@ function createAccount($payload)
         return $response;
     }
 
+    // generate token
+    $token = generateToken($lastInsertedId, $username);
+
+    // set response header 
+    header("Authorization: Bearer $token");
     http_response_code(200);
     $response = [
         "status" => 200,
@@ -93,6 +98,16 @@ function getAccounts()
 
 function getAccount($payload)
 {
+    if (checkToken() !== true) {
+        http_response_code(401);
+        $response = [
+            "status" => 401,
+            "state" => false,
+            "message" => "Access Token is not valid."
+        ];
+        return $response;
+    }
+
     $id = $payload["id"] ?? null;
 
     if ($id == null) {

@@ -51,6 +51,10 @@
       const baseUrl =
         "http://localhost/AhmetOguzErgin/Web/API_Authentication_Php/";
 
+      const accesstoken =
+        "Bearer eyJhbGciOiJTSEEyNTYiLCJ0eXAiOiJKV1QifQ==.eyJpZCI6IjE1IiwibmFtZSI6IkNpbGVrIiwiaWF0IjoxNjk5NTY0ODE2LCJleHAiOjE2OTk2NTEyMTZ9.MGIzY2NhY2Q5MGQ3ZDBiZjI3N2E1ZDkyN2VjOGYxMmU4YjUyYmExMDg1NjFmOTljNTgwNjI0ZTgyNzBjMTJjYg==";
+        
+
       function login() {
         const url = baseUrl;
         const type = "post";
@@ -83,8 +87,8 @@
         const url = baseUrl;
         const type = "get";
         const headers = {
-          accesstoken:
-            "Bearer eyJhbGciOiJTSEEyNTYiLCJ0eXAiOiJKV1QifQ==.eyJpZCI6IklEIiwibmFtZSI6Ik5BTUUiLCJpYXQiOjE2OTkzODYwMDQsImV4cCI6MTY5OTQ3MjQwNH0=.MGQzODIxOGNhNjlhOTU1NjQ4NmE5YjBmMDJmMWQ4MDg2ZjZlYjA4NGUyM2MwNTg3NjYwZjI1MzU2MTJjZTI4Mg==",
+          accesstoken: accesstoken,
+          "Content-Type": "application/json",
         };
         const data = {
           operation: "getAccounts",
@@ -92,15 +96,45 @@
         request(url, type, headers, data);
       }
 
+      function getAccount() {
+        const url = baseUrl;
+        const type = "get";
+        const headers = {
+          accesstoken: accesstoken,
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "getAccount",
+          id: 1,
+        };
+        request(url, type, headers, data);
+      }
+
+      function createAccount() {
+        const url = baseUrl;
+        const type = "post";
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "createAccount",
+          username: "Cilek",
+          password: 1234,
+        };
+        request(url, type, headers, data);
+      }
+
       // ----- - main - -----
 
       // login();
-      logout();
+      // logout();
       // getAccounts();
+      // getAccount();
+      // createAccount();
 
       setTimeout(() => {
         $("#res").append("cookie bilgileri aşağıda veriliyor: </br>");
-        $("#res").append(document.cookie);
+        $("#res").append(decodeURIComponent(document.cookie));
       }, 500);
       // --------------------
     </script>
