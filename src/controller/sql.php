@@ -288,11 +288,9 @@ function login($username, $password)
     }
 
     // generate token
-    $token = generateToken();
+    $token = generateToken($row["id"], $row["username"]);
 
     //set cookie
-    //TODO secure and http only will change
-    //                                                             secure httponly
     setcookie("Access_Token", $token, time() + 60 * 60 * 24 * 1, "/", "", false, false);
     // true as the 6th parameter makes the cookie secure, ensuring that it is only transmitted over HTTPS connections.
     // true as the 7th parameter sets the HttpOnly flag, which prevents the cookie from being accessed by JavaScript.
@@ -320,7 +318,7 @@ function logout()
     unset($_COOKIE["token"]);
 
     // unset cookie from browser
-    setcookie('token', '', time() - 3600, '/');
+    setcookie('Access_Token', '', time() - 3600, '/');
 
     $response = [
         "status" => 200,
@@ -332,7 +330,7 @@ function logout()
 }
 
 //---------------------- - Authentication Token Functions -  ----------------------
-function generateToken()
+function generateToken($id, $name)
 {
     // base64 header and body encode with base64
     // $decodedData = base64_decode($encodedData);
@@ -344,8 +342,8 @@ function generateToken()
     $jwtHeaderEncoded = base64_encode($jwtHeaderJson);
 
     $jwtBody = [
-        "id" => "ID",
-        "name" => "NAME",
+        "id" => $id,
+        "name" => $name,
         "iat" => time(),
         "exp" => time() + 60 * 60 * 24 // Expiration time 1 day
     ];
