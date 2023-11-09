@@ -315,7 +315,7 @@ function login($username, $password)
 function logout()
 {
     // for php remove cookie data
-    unset($_COOKIE["token"]);
+    unset($_COOKIE["Access_Token"]);
 
     // unset cookie from browser
     setcookie('Access_Token', '', time() - 3600, '/');
