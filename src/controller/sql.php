@@ -305,8 +305,9 @@ function login($username, $password)
     // generate token
     $token = generateToken($row["id"], $row["username"]);
 
+    // Bu api'da cookiler kullanmamaktadır. JWT Header ile gönderilmekte ve header ile alınmaktadır.
     //set cookie
-    setcookie("Access_Token", $token, time() + 60 * 60 * 24 * 1, "/", "", false, false);
+    setcookie("AccessToken", $token, time() + 60 * 60 * 24 * 1, "/", "", false, false);
     // true as the 6th parameter makes the cookie secure, ensuring that it is only transmitted over HTTPS connections.
     // true as the 7th parameter sets the HttpOnly flag, which prevents the cookie from being accessed by JavaScript.
 
@@ -319,7 +320,7 @@ function login($username, $password)
         "message" => "Login operation is successfull.",
         "data" => [
             "account" => $row,
-            "token" => "Authorization: Bearer " . $token
+            "accessToken" => "Authorization: Bearer " . $token
         ],
     ];
 
@@ -330,10 +331,10 @@ function login($username, $password)
 function logout()
 {
     // for php remove cookie data
-    unset($_COOKIE["Access_Token"]);
+    unset($_COOKIE["AccessToken"]);
 
     // unset cookie from browser
-    setcookie('Access_Token', '', time() - 3600, '/');
+    setcookie('AccessToken', '', time() - 3600, '/');
 
     $response = [
         "status" => 200,

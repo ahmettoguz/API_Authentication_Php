@@ -52,7 +52,7 @@
         "http://localhost/AhmetOguzErgin/Web/API_Authentication_Php/";
 
       const accesstoken =
-        "Bearer eyJhbGciOiJTSEEyNTYiLCJ0eXAiOiJKV1QifQ==.eyJpZCI6IjE1IiwibmFtZSI6IkNpbGVrIiwiaWF0IjoxNjk5NTY0ODE2LCJleHAiOjE2OTk2NTEyMTZ9.MGIzY2NhY2Q5MGQ3ZDBiZjI3N2E1ZDkyN2VjOGYxMmU4YjUyYmExMDg1NjFmOTljNTgwNjI0ZTgyNzBjMTJjYg==";
+        "Bearer eyJhbGciOiJTSEEyNTYiLCJ0eXAiOiJKV1QifQ==.eyJpZCI6IjEiLCJuYW1lIjoiYWhtZXQiLCJpYXQiOjE2OTk4MTE2OTAsImV4cCI6MTY5OTg5ODA5MH0=.MTU4NTRjNjkyOGRlMmNlODYxZDBlZGJjYTdhNWM1MzcwNTkwYzcwOTBhYmYwZTcyMDY5NDBhNDNlZDIxYjJhNw==";
         
 
       function login() {
@@ -128,14 +128,15 @@
 
       // login();
       // logout();
-      // getAccounts();
+      getAccounts();
       // getAccount();
       // createAccount();
+      
 
-      setTimeout(() => {
-        $("#res").append("cookie bilgileri aşağıda veriliyor: </br>");
-        $("#res").append(decodeURIComponent(document.cookie));
-      }, 500);
+      // setTimeout(() => {
+      //   $("#res").append("cookie bilgileri aşağıda veriliyor: </br>");
+      //   $("#res").append(decodeURIComponent(document.cookie));
+      // }, 500);
       // --------------------
     </script>
   </body>
