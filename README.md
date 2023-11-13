@@ -19,3 +19,8 @@ STATUS CODES:
 
 500 (Internal Server Error)
     500 HTTP status code means requesting a URL is not fulfilled because the server encounters an unexpected condition. It gives information about the request made if it is successful, and throws an error. When there’s an error during a connection to the server, and the requested page cannot be accessed then this message is displayed. 
+
+* JWT is used for authentication.
+* AES 256 algorithm is used for encryption.
+* SHA 256 algorithm is used for encryption.
+* Requests are simulated in request.html file.

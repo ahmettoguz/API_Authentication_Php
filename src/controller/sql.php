@@ -346,6 +346,26 @@ function logout()
 }
 
 //---------------------- - Authentication Token Functions -  ----------------------
+function AesEncrypt($data, $key)
+{
+    // symmetrical encryption
+    $cipher = "aes-256-cbc";
+    $ivlen = openssl_cipher_iv_length($cipher);
+    $iv = openssl_random_pseudo_bytes($ivlen);
+    $encrypted = openssl_encrypt($data, $cipher, $key,  0, $iv);
+    return base64_encode($iv . $encrypted);
+}
+
+function AesDecrypt($data, $key)
+{
+    $cipher = "aes-256-cbc";
+    $data = base64_decode($data);
+    $ivlen = openssl_cipher_iv_length($cipher);
+    $iv = substr($data, 0, $ivlen);
+    $data = substr($data, $ivlen);
+    return openssl_decrypt($data, $cipher, $key, 0, $iv);
+}
+
 function generateToken($id, $name)
 {
     // base64 header and body encode with base64
@@ -364,20 +384,21 @@ function generateToken($id, $name)
         "exp" => time() + 60 * 60 * 24 // Expiration time 1 day
     ];
     $jwtBodyJson = json_encode($jwtBody);
-    $jwtBodyEncoded = base64_encode($jwtBodyJson);
+    $jwtBodyJsonEncrypted = AesEncrypt($jwtBodyJson, "key");
+    $jwtBodyFinal = base64_encode($jwtBodyJsonEncrypted);
 
     // sha 256 signiture
-    $signiture = getSigniture($jwtHeaderEncoded, $jwtBodyEncoded);
+    $signiture = getSigniture($jwtHeaderEncoded, $jwtBodyFinal);
 
-    $token = $jwtHeaderEncoded . "." . $jwtBodyEncoded . "." . $signiture;
+    $token = $jwtHeaderEncoded . "." . $jwtBodyFinal . "." . $signiture;
 
     return $token;
 }
 
-function getSigniture($jwtHeaderEncoded, $jwtBodyEncoded)
+function getSigniture($jwtHeaderEncoded, $jwtBodyFinal)
 {
     $secretKey = "secret";
-    $jwtHeaders = $jwtHeaderEncoded . $jwtBodyEncoded . $secretKey;
+    $jwtHeaders = $jwtHeaderEncoded . $jwtBodyFinal . $secretKey;
 
     $signiture = hash('sha256', $jwtHeaders);
     $signitureEncoded = base64_encode($signiture);
@@ -418,6 +439,7 @@ function checkToken()
 
     // Decode the base64-encoded payload 
     $payload = base64_decode($tokenParts[1]);
+    $payload = AesDecrypt($payload, "key");
     $payloadData = json_decode($payload, true);
 
     // if token is expired
