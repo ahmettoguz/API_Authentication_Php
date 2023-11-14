@@ -117,12 +117,27 @@
         request(url, type, headers, data);
       }
 
+      function updateAccount() {
+        const url = baseUrl;
+        const type = "post";
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "updateAccount",
+          id: "6",
+          username: "Cilek",
+          password: 1234,
+        };
+        request(url, type, headers, data);
+      }
+
       // ----- - main - -----
       const baseUrl =
         "http://localhost/AhmetOguzErgin/Web/API_Authentication_Php/";
 
       const accesstoken =
-        "Bearer eyJhbGciOiJTSEEyNTYiLCJ0eXAiOiJKV1QifQ==.cFduWlBwRXREcEQvbjF0TzdqWUpvbmd6YmpoeVdsaFZVRTh4VDB0d1JVOTFXakpxZVd4WWJ5dGtTV05YWWxSQ2NVVjNTVUY0WnpWQmMwY3diMjVZY2xKWWRqTlpVVEIyTUZKNWJESjFaekJGYXpsSkswMHdZM2hFUkdjM1owTXdZbll2TjIxQlBUMD0=.MWE5NWFkYTVjZDczM2ZmNDAyODg0NjY5Y2I1YzdjY2JkMjU5OTY2ZTdmNWZkZDRmYzAzZWUwM2M1NGRlZTkxNQ==";
+        "Bearer eyJhbGciOiJTSEEyNTYiLCJ0eXAiOiJKV1QifQ==.RHVTT291Q1RaWGlnRCt4VXQzUzFBazgyZFRFNE5XTXZaMlUyTUc5a09HeEZaMDV3U2xSd1UyZGtOM2hVYzFodk5VWktURkJIVmtoS2VsUnJWSGRFY0VSeUx6TXpjbFYwVXlzM1N6RnBWekExUjAxYVltTTNiblJOYldOV1NsQkVSVGxvUVVSUlBUMD0=.OTQ3MWRiNmNmODk5Y2QzNDQ0MzlhZTkzNDE5MjY3YWFmOWZlYWUxYTIyMmVjMGFjYjRlNGM4MDUwN2Q3YzhkZQ==";
       // ----------------------------------------------------------------------
 
       // login();
@@ -130,7 +145,7 @@
       getAccounts();
       // getAccount();
       // createAccount();
-      // updateAccount
+      // updateAccount();
 
       // setTimeout(() => {
       //   $("#res").append("cookie bilgileri aşağıda veriliyor: </br>");
