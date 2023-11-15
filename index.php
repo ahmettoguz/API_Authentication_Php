@@ -20,6 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         case 'getAccounts':
             echo json_encode(getAccounts());
             break;
+        case 'getTokenData':
+            echo json_encode(getTokenData());
+            break;
 
         default:
             echo json_encode(getNotFound());
