@@ -59,15 +59,8 @@ function createAccount($payload)
 //---------------------- - READ - ----------------------
 function getAccounts()
 {
-    if (checkToken() !== true) {
-        http_response_code(401);
-        $response = [
-            "status" => 401,
-            "state" => false,
-            "message" => "Access Token is not valid."
-        ];
-        return $response;
-    }
+    if (checkToken() !== true)
+        exitByInvalidToken();
 
     global $db;
 
@@ -99,15 +92,8 @@ function getAccounts()
 
 function getAccount($payload)
 {
-    if (checkToken() !== true) {
-        http_response_code(401);
-        $response = [
-            "status" => 401,
-            "state" => false,
-            "message" => "Access Token is not valid."
-        ];
-        return $response;
-    }
+    if (checkToken() !== true)
+        exitByInvalidToken();
 
     $id = $payload["id"] ?? null;
 
@@ -155,15 +141,8 @@ function getAccount($payload)
 //---------------------- - UPDATE -  ----------------------
 function updateAccount($payload)
 {
-    if (checkToken() !== true) {
-        http_response_code(401);
-        $response = [
-            "status" => 401,
-            "state" => false,
-            "message" => "Access Token is not valid."
-        ];
-        return $response;
-    }
+    if (checkToken() !== true)
+        exitByInvalidToken();
 
     $id = $payload["id"] ?? null;
     $username = $payload["username"] ?? null;
@@ -232,15 +211,8 @@ function updateAccount($payload)
 //---------------------- - DELETE -  ----------------------
 function deleteAccount($payload)
 {
-    if (checkToken() !== true) {
-        http_response_code(401);
-        $response = [
-            "status" => 401,
-            "state" => false,
-            "message" => "Access Token is not valid."
-        ];
-        return $response;
-    }
+    if (checkToken() !== true)
+        exitByInvalidToken();
 
     $id = $payload["id"] ?? null;
 
@@ -293,20 +265,6 @@ function deleteAccount($payload)
     ];
     return $response;
 }
-
-
-//---------------------- - 404 -  ----------------------
-function getNotFound()
-{
-    http_response_code(404);
-    $response = [
-        "status" => 404,
-        "state" => false,
-        "message" => "Payload error"
-    ];
-    return $response;
-}
-
 
 //---------------------- - LOGIN -  ----------------------
 function login($username, $password)
@@ -376,5 +334,17 @@ function logout()
         "message" => "Logout successfully done.",
     ];
 
+    return $response;
+}
+
+//---------------------- - 404 -  ----------------------
+function getNotFound()
+{
+    http_response_code(404);
+    $response = [
+        "status" => 404,
+        "state" => false,
+        "message" => "Payload error"
+    ];
     return $response;
 }

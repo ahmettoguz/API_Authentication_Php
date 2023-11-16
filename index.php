@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 // POST
 elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // get input as json and not form data
+    // get input as json and not form data"
     $jsonData = file_get_contents('php://input');
     // parse the URL-encoded data
     parse_str($jsonData, $data);

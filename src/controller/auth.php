@@ -125,15 +125,8 @@ function checkToken()
 
 function getTokenData()
 {
-    if (checkToken() !== true) {
-        http_response_code(401);
-        $response = [
-            "status" => 401,
-            "state" => false,
-            "message" => "Access Token is not valid."
-        ];
-        return $response;
-    }
+    if (checkToken() !== true)
+        exitByInvalidToken();
 
     $jwtToken = $_SERVER['HTTP_ACCESSTOKEN'];
 
@@ -160,4 +153,18 @@ function getTokenData()
         "data" => ["account" => $account, "accessToken" => $payloadData]
     ];
     return $response;
+}
+
+function exitByInvalidToken()
+{
+    if (checkToken() !== true) {
+        http_response_code(401);
+        $response = [
+            "status" => 401,
+            "state" => false,
+            "message" => "Access Token is not valid."
+        ];
+        echo json_encode($response);
+        exit;
+    }
 }
