@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/../database/dbConnection.php";
+require_once __DIR__ . "/auth.php";
 
 //---------------------- - CREATE - ----------------------
 function createAccount($payload)
@@ -40,6 +41,11 @@ function createAccount($payload)
         return $response;
     }
 
+    // generate token
+    $token = generateToken($lastInsertedId, $username);
+
+    // set response header 
+    header("Authorization: Bearer $token");
     http_response_code(200);
     $response = [
         "status" => 200,
@@ -53,6 +59,9 @@ function createAccount($payload)
 //---------------------- - READ - ----------------------
 function getAccounts()
 {
+    if (checkToken() !== true)
+        exitByInvalidToken();
+
     global $db;
 
     try {
@@ -83,6 +92,9 @@ function getAccounts()
 
 function getAccount($payload)
 {
+    if (checkToken() !== true)
+        exitByInvalidToken();
+
     $id = $payload["id"] ?? null;
 
     if ($id == null) {
@@ -129,6 +141,9 @@ function getAccount($payload)
 //---------------------- - UPDATE -  ----------------------
 function updateAccount($payload)
 {
+    if (checkToken() !== true)
+        exitByInvalidToken();
+
     $id = $payload["id"] ?? null;
     $username = $payload["username"] ?? null;
     $password = $payload["password"] ?? null;
@@ -142,6 +157,19 @@ function updateAccount($payload)
         ];
         return $response;
     }
+
+    $account = getAccount($payload)["data"]["account"];
+
+    if ($account == false) {
+        http_response_code(400);
+        $response = [
+            "status" => 400,
+            "state" => false,
+            "message" => "There is no account with id $id",
+        ];
+        return $response;
+    }
+
 
     // html, js injection preventation
     $username = filter_var($username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -183,6 +211,9 @@ function updateAccount($payload)
 //---------------------- - DELETE -  ----------------------
 function deleteAccount($payload)
 {
+    if (checkToken() !== true)
+        exitByInvalidToken();
+
     $id = $payload["id"] ?? null;
 
     if ($id == null) {
@@ -197,7 +228,7 @@ function deleteAccount($payload)
 
     global $db;
 
-    $account = getAccount(["id" => $id])["data"]["account"];
+    $account = getAccount($payload)["data"]["account"];
 
     if ($account == false) {
         http_response_code(400);
@@ -235,29 +266,12 @@ function deleteAccount($payload)
     return $response;
 }
 
-
-//---------------------- - 404 -  ----------------------
-function getNotFound()
-{
-    http_response_code(404);
-    $response = [
-        "status" => 404,
-        "state" => false,
-        "message" => "Payload error"
-    ];
-    return $response;
-}
-
-
-
-
 //---------------------- - LOGIN -  ----------------------
 function login($username, $password)
 {
     global $db;
 
     // $password = sha1($password . "SOCI");
-
 
     try {
         $sql = "select id, username from account where username = :username and password = :password";
@@ -272,35 +286,65 @@ function login($username, $password)
 
     if ($row == false) {
         http_response_code(401);
-        return false;
+        $response = [
+            "status" => 401,
+            "state" => false,
+            "message" => "Unauthorized."
+        ];
+        return $response;
     }
 
-    $tokenn = "q2e";
+    // generate token
+    $token = generateToken($row["id"], $row["username"]);
 
-    http_response_code(200);
-    header("Authorization: Bearer $tokenn");
-
-    //TODO secure and http only will change
-    //                                                             secure httponly
-    setcookie("token", $tokenn, time() + 60 * 60 * 24 * 1, "/", "", false, false);
+    // Bu api'da cookiler kullanmamaktadır. JWT Header ile gönderilmekte ve header ile alınmaktadır.
+    //set cookie
+    setcookie("AccessToken", $token, time() + 60 * 60 * 24 * 1, "/", "", false, false);
     // true as the 6th parameter makes the cookie secure, ensuring that it is only transmitted over HTTPS connections.
     // true as the 7th parameter sets the HttpOnly flag, which prevents the cookie from being accessed by JavaScript.
 
-    return $row;
+    // set response header 
+    header("Authorization: Bearer $token");
+    http_response_code(200);
+    $response = [
+        "status" => 200,
+        "state" => true,
+        "message" => "Login operation is successfull.",
+        "data" => [
+            "account" => $row,
+            "accessToken" => "Authorization: Bearer " . $token
+        ],
+    ];
+
+    return $response;
 }
 
 //---------------------- - LOGOUT -  ----------------------
-function log_Out()
+function logout()
 {
-    $_SESSION = [];
+    // for php remove cookie data
+    unset($_COOKIE["AccessToken"]);
 
-    // delete cookie
-    setcookie(session_name(), "", 1, "/"); // delete memory cookie 
+    // unset cookie from browser
+    setcookie('AccessToken', '', time() - 3600, '/');
 
-    // delete session file from tmp
-    session_destroy();
+    $response = [
+        "status" => 200,
+        "state" => true,
+        "message" => "Logout successfully done.",
+    ];
 
-    // header("Location:http://localhost/AhmetOguzErgin/Web/project_manager/");
+    return $response;
+}
 
-    return true;
+//---------------------- - 404 -  ----------------------
+function getNotFound()
+{
+    http_response_code(404);
+    $response = [
+        "status" => 404,
+        "state" => false,
+        "message" => "Payload error"
+    ];
+    return $response;
 }
