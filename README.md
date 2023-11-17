@@ -1,8 +1,8 @@
-<h1 align="center">Secured PHP API <br> CRUD Operations with JWT Authentication and Encryption</h1>
+<h1 align="center">Secured PHP API <br> CRUD Operations with JWT Authentication</h1>
 <br>
 
 <div align="center">
-    <img width=250 src="/assets/img/favicon.png">
+    <img width=750 src="/src/img/banner.png">
 </div>
 
 <br/>
