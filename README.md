@@ -1,26 +1,44 @@
-# API_Authentication_Php
+<h1 align="center">Secured PHP API <br> CRUD Operations with JWT Authentication and Encryption</h1>
+<br>
 
-STATUS CODES:
+<div align="center">
+    <img width=250 src="/assets/img/favicon.png">
+</div>
 
-200  (Success/OK) 
+<br/>
 
-301,302 (Redirect)
+## Table of Contents
 
-400 (Bad Request)
-    When the client requests a page and the server is not able to understand anything, it displays a 400 HTTP status code. The client SHOULD NOT repeat the request without any changes. The request can be a malformed, deceptive request routing, or invalid request.
+- [Introduction](#introduction)
+- [Technologies](#technologies)
+- [Features](#features)
+- [Contributors](#contributors)
 
-401 (Unauthorized Error)
-    This HTTP status code requires user authentication
+<br/>
 
-403 (Forbidden)
-    The HTTP status code 403 implies that the request is understood by the server, but still refuses to fulfill it. If the request method was not HEAD and also the server wants to make it public when the request is not completed, it SHOULD tell the reason for the refusal in the entity. 
+## Introduction
+The security of APIs is paramount, and this API project prioritizes it by employing JWT tokens for authentication and protection. The project comes with an example database and associated endpoints, offering a straightforward way to modify content and develop other secure API applications. 
 
-404 (Not Found)
+<br/>
 
-500 (Internal Server Error)
-    500 HTTP status code means requesting a URL is not fulfilled because the server encounters an unexpected condition. It gives information about the request made if it is successful, and throws an error. When there’s an error during a connection to the server, and the requested page cannot be accessed then this message is displayed. 
+## Technologies
 
-* JWT is used for authentication.
-* AES 256 algorithm is used for encryption.
-* SHA 256 algorithm is used for encryption.
-* Requests are simulated in request.html file.
+* JWT
+* PHP
+* MySql
+
+<br/>
+
+## Features
+
+* CRUD operations implemented.
+* JWT tokens used for authentication.
+* AES 256 symmetric encryption algorithm used.
+* SHA 256 hashing algorithm used.
+* All requests are simulated in request.html file.
+
+<br/>
+
+## Contributors
+
+<a href="https://github.com/ahmettoguz" target="_blank"><img width=50 height=50 src="https://avatars.githubusercontent.com/u/101711642?v=4"></a>
