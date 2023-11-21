@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>api test</title>
+    <style>
+      body {
+        background-color: #fbfbfb;
+        font-size: 15px;
+        line-height: 25px;
+        padding-left: 50px;
+      }
+      #res {
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        border-radius: 5px;
+        background-color: white;
+        width: fit-content;
+        margin: 0 auto;
+        padding: 5px 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="res">api test</div>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      function request(url, type, headers, data) {
+        $.ajax({
+          url: url,
+          type: type,
+          headers: headers,
+          data: data,
+          success: function (response) {
+            const out = JSON.stringify(response, null, 3);
+            $("#res").html("<pre>" + out + "</pre>");
+
+            console.log(response);
+          },
+          error: function (xhr, status, error) {
+            console.error(xhr, status, error);
+          },
+        });
+      }
+      // ---------------------------------------------
+      function login() {
+        const url = baseUrl;
+        const type = "post";
+        const headers = {
+          Authorization: "Bearer YourAccessToken",
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "login",
+          username: "ahmet",
+          password: "1234",
+        };
+        request(url, type, headers, data);
+      }
+
+      function logout() {
+        const url = baseUrl;
+        const type = "post";
+        const headers = {
+          Authorization: "Bearer YourAccessToken",
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "logout",
+        };
+        request(url, type, headers, data);
+      }
+
+      function getAccounts() {
+        const url = baseUrl;
+        const type = "get";
+        const headers = {
+          accesstoken: accesstoken,
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "getAccounts",
+        };
+        request(url, type, headers, data);
+      }
+
+      function getAccount() {
+        const url = baseUrl;
+        const type = "get";
+        const headers = {
+          accesstoken: accesstoken,
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "getAccount",
+          id: 1,
+        };
+        request(url, type, headers, data);
+      }
+
+      function getTokenData() {
+        const url = baseUrl;
+        const type = "get";
+        const headers = {
+          accesstoken: accesstoken,
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "getTokenData",
+        };
+        request(url, type, headers, data);
+      }
+
+      function createAccount() {
+        const url = baseUrl;
+        const type = "post";
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "createAccount",
+          username: "Cilek",
+          password: 1234,
+        };
+        request(url, type, headers, data);
+      }
+
+      function updateAccount() {
+        const url = baseUrl;
+        const type = "post";
+        const headers = {
+          accesstoken: accesstoken,
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "updateAccount",
+          id: "7",
+          username: "Cilekk",
+          password: 1234,
+        };
+        request(url, type, headers, data);
+      }
+
+      function deleteAccount() {
+        const url = baseUrl;
+        const type = "post";
+        const headers = {
+          accesstoken: accesstoken,
+          "Content-Type": "application/json",
+        };
+        const data = {
+          operation: "deleteAccount",
+          id: "10",
+        };
+        request(url, type, headers, data);
+      }
+
+      // ----- - main - -----
+      const baseUrl =
+        "http://localhost/AhmetOguzErgin/Web/API_Authentication_Php/";
+
+      // const accesstoken =
+      //   "Bearer eyJhbGciOiJTSEEyNTYiLCJ0eXAiOiJKV1QifQ==.RHVTT291Q1RaWGlnRCt4VXQzUzFBazgyZFRFNE5XTXZaMlUyTUc5a09HeEZaMDV3U2xSd1UyZGtOM2hVYzFodk5VWktURkJIVmtoS2VsUnJWSGRFY0VSeUx6TXpjbFYwVXlzM1N6RnBWekExUjAxYVltTTNiblJOYldOV1NsQkVSVGxvUVVSUlBUMD0=.OTQ3MWRiNmNmODk5Y2QzNDQ0MzlhZTkzNDE5MjY3YWFmOWZlYWUxYTIyMmVjMGFjYjRlNGM4MDUwN2Q3YzhkZQ==";
+      const accesstoken =
+        "Bearer eyJhbGciOiJTSEEyNTYiLCJ0eXAiOiJKV1QifQ==.Yzg4eGtnV3lubDk4ZHFuZnZLeUZnRGRsUkRWMVIyRlRNeTg1ZWtsd09EQTBSWEYxYTNnMWNHeGlkWFJsU2pCemQzSXlkazVHVGxCeldubEZlRVkzVjFWSmMyaHZXR3A1VURsRmNrRk1NSFpOU3pjNFIwSm9TMVUyY2xVcldFUTFhRk0yWWt4M1BUMD0=.MDNiMjBkMjUzOGVlYWYxNjE5MjRiNDgzNDczYjhjZWI0NTBiNzdmOTRhYzU1MTY1YjI2ZjgwZjBlMWZlYjgzOA==";
+      // ----------------------------------------------------------------------
+
+      // login();
+      // logout();
+      // getAccounts();
+      // getAccount();
+      getTokenData();
+      // createAccount();
+      // updateAccount();
+      // deleteAccount();
+
+      // setTimeout(() => {
+      //   $("#res").append("cookie bilgileri aşağıda veriliyor: </br>");
+      //   $("#res").append(decodeURIComponent(document.cookie));
+      // }, 500);
+      // ----------------------------------------------------------------------
+    </script>
+  </body>
+</html>
