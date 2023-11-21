@@ -1,3 +1,4 @@
+
 <h1 align="center">Secured PHP API <br> CRUD Operations with JWT Authentication</h1>
 <br>
 
@@ -42,3 +43,6 @@ The security of APIs is paramount, and this API project prioritizes it by employ
 ## Contributors
 
 <a href="https://github.com/ahmettoguz" target="_blank"><img width=50 height=50 src="https://avatars.githubusercontent.com/u/101711642?v=4"></a>
+
+
+
