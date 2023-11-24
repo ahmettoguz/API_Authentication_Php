@@ -24,9 +24,11 @@ The security of APIs is paramount, and this API project prioritizes it by employ
 
 ## Technologies
 
-* JWT
-* PHP
-* MySql
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+
+![PHP](https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white)
+
+![MYSQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
 
 <br/>
 
